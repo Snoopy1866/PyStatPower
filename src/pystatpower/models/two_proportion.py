@@ -6,7 +6,7 @@ from math import ceil, sqrt
 from scipy.optimize import brentq
 from scipy.stats import norm
 
-from pystatpower.numeric import (
+from pystatpower.core.numbers import (
     Alpha,
     DropOutRate,
     DropOutSize,
@@ -17,7 +17,7 @@ from pystatpower.numeric import (
     Ratio,
     Size,
 )
-from pystatpower.option import Alternative, Option, SearchDirection
+from pystatpower.core.options import Alternative, Option, SearchDirection
 
 __all__ = [
     "GroupAllocation",

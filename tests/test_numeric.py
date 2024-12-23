@@ -2,17 +2,17 @@ from math import ceil, floor, trunc
 
 import pytest
 
-from pystatpower.numeric import (
+from pystatpower.core.numbers import (
     MAX_FLOAT,
     MIN_FLOAT,
     STD,
     Alpha,
+    BaseNumber,
     DropOutRate,
     Interval,
     Mean,
     Percent,
     Power,
-    PowerAnalysisFloat,
     Proportion,
     Ratio,
     Size,
@@ -69,24 +69,24 @@ class TestInterval:
 
 class TestNumeric:
     def test_domain(self):
-        assert PowerAnalysisFloat.domain == Interval(-MAX_FLOAT, MAX_FLOAT, lower_inclusive=True, upper_inclusive=True)
+        assert BaseNumber.domain == Interval(-MAX_FLOAT, MAX_FLOAT, lower_inclusive=True, upper_inclusive=True)
 
     def test_new(self):
-        assert PowerAnalysisFloat(0) == 0
-        assert PowerAnalysisFloat(0.5) == 0.5
-        assert PowerAnalysisFloat(1) == 1
-        assert PowerAnalysisFloat(-MAX_FLOAT) == -MAX_FLOAT
-        assert PowerAnalysisFloat(-MIN_FLOAT) == -MIN_FLOAT
-        assert PowerAnalysisFloat(MIN_FLOAT) == MIN_FLOAT
-        assert PowerAnalysisFloat(MAX_FLOAT) == MAX_FLOAT
+        assert BaseNumber(0) == 0
+        assert BaseNumber(0.5) == 0.5
+        assert BaseNumber(1) == 1
+        assert BaseNumber(-MAX_FLOAT) == -MAX_FLOAT
+        assert BaseNumber(-MIN_FLOAT) == -MIN_FLOAT
+        assert BaseNumber(MIN_FLOAT) == MIN_FLOAT
+        assert BaseNumber(MAX_FLOAT) == MAX_FLOAT
 
         with pytest.raises(TypeError):
-            PowerAnalysisFloat("0.5")
+            BaseNumber("0.5")
         with pytest.raises(ValueError):
-            PowerAnalysisFloat(-MAX_FLOAT - 1)
+            BaseNumber(-MAX_FLOAT - 1)
 
     def test_pseudo_domain(self):
-        assert PowerAnalysisFloat.pseudo_bound() == (-MAX_FLOAT, MAX_FLOAT)
+        assert BaseNumber.pseudo_bound() == (-MAX_FLOAT, MAX_FLOAT)
         assert Alpha.pseudo_bound() == (0 + MIN_FLOAT, 1 - MIN_FLOAT)
         assert Power.pseudo_bound() == (0 + MIN_FLOAT, 1 - MIN_FLOAT)
         assert Mean.pseudo_bound() == (-MAX_FLOAT + MIN_FLOAT, MAX_FLOAT - MIN_FLOAT)
@@ -98,48 +98,48 @@ class TestNumeric:
         assert DropOutRate.pseudo_bound() == (0, 1 - MIN_FLOAT)
 
     def test_operator(self):
-        assert PowerAnalysisFloat(1) + 1 == 2
-        assert PowerAnalysisFloat(1) + PowerAnalysisFloat(1) == 2
-        assert 1 + PowerAnalysisFloat(1) == 2
+        assert BaseNumber(1) + 1 == 2
+        assert BaseNumber(1) + BaseNumber(1) == 2
+        assert 1 + BaseNumber(1) == 2
 
-        assert PowerAnalysisFloat(0.2) + 0.3 == 0.5
-        assert PowerAnalysisFloat(0.2) + PowerAnalysisFloat(0.3) == 0.5
-        assert 0.2 + PowerAnalysisFloat(0.3) == 0.5
+        assert BaseNumber(0.2) + 0.3 == 0.5
+        assert BaseNumber(0.2) + BaseNumber(0.3) == 0.5
+        assert 0.2 + BaseNumber(0.3) == 0.5
 
-        assert PowerAnalysisFloat(2) - PowerAnalysisFloat(1) == 1
-        assert PowerAnalysisFloat(2) * PowerAnalysisFloat(3) == 6
-        assert PowerAnalysisFloat(4) / PowerAnalysisFloat(2) == 2
-        assert PowerAnalysisFloat(5) // PowerAnalysisFloat(2) == 2
-        assert PowerAnalysisFloat(5) % PowerAnalysisFloat(2) == 1
-        assert PowerAnalysisFloat(2) ** PowerAnalysisFloat(3) == 8
+        assert BaseNumber(2) - BaseNumber(1) == 1
+        assert BaseNumber(2) * BaseNumber(3) == 6
+        assert BaseNumber(4) / BaseNumber(2) == 2
+        assert BaseNumber(5) // BaseNumber(2) == 2
+        assert BaseNumber(5) % BaseNumber(2) == 1
+        assert BaseNumber(2) ** BaseNumber(3) == 8
 
-        assert abs(PowerAnalysisFloat(-1)) == 1
-        assert +PowerAnalysisFloat(1) == 1
-        assert -PowerAnalysisFloat(1) == -1
-        assert trunc(PowerAnalysisFloat(1.5)) == 1
-        assert floor(PowerAnalysisFloat(1.5)) == 1
-        assert ceil(PowerAnalysisFloat(1.5)) == 2
-        assert round(PowerAnalysisFloat(3.1415)) == 3
-        assert round(PowerAnalysisFloat(-3.1515)) == -3
-        assert round(PowerAnalysisFloat(3.1415), 3) == 3.142
-        assert round(PowerAnalysisFloat(-3.1415), 3) == -3.142
+        assert abs(BaseNumber(-1)) == 1
+        assert +BaseNumber(1) == 1
+        assert -BaseNumber(1) == -1
+        assert trunc(BaseNumber(1.5)) == 1
+        assert floor(BaseNumber(1.5)) == 1
+        assert ceil(BaseNumber(1.5)) == 2
+        assert round(BaseNumber(3.1415)) == 3
+        assert round(BaseNumber(-3.1515)) == -3
+        assert round(BaseNumber(3.1415), 3) == 3.142
+        assert round(BaseNumber(-3.1415), 3) == -3.142
 
-        assert PowerAnalysisFloat(1) == PowerAnalysisFloat(1)
-        assert PowerAnalysisFloat(1) != PowerAnalysisFloat(2)
-        assert PowerAnalysisFloat(1) < PowerAnalysisFloat(2)
-        assert PowerAnalysisFloat(1) > PowerAnalysisFloat(0)
-        assert PowerAnalysisFloat(1) <= PowerAnalysisFloat(2)
-        assert PowerAnalysisFloat(1) >= PowerAnalysisFloat(0)
+        assert BaseNumber(1) == BaseNumber(1)
+        assert BaseNumber(1) != BaseNumber(2)
+        assert BaseNumber(1) < BaseNumber(2)
+        assert BaseNumber(1) > BaseNumber(0)
+        assert BaseNumber(1) <= BaseNumber(2)
+        assert BaseNumber(1) >= BaseNumber(0)
 
-        assert int(PowerAnalysisFloat(1.2)) == 1
-        assert float(PowerAnalysisFloat(1.2)) == 1.2
-        assert complex(PowerAnalysisFloat(1.2)) == 1.2 + 0j
+        assert int(BaseNumber(1.2)) == 1
+        assert float(BaseNumber(1.2)) == 1.2
+        assert complex(BaseNumber(1.2)) == 1.2 + 0j
 
-        assert hash(PowerAnalysisFloat(3.1415)) == hash(3.1415)
-        assert bool(PowerAnalysisFloat(3.1415)) == bool(3.1415)
+        assert hash(BaseNumber(3.1415)) == hash(3.1415)
+        assert bool(BaseNumber(3.1415)) == bool(3.1415)
 
         with pytest.raises(TypeError):
-            PowerAnalysisFloat(1) + "1"
+            BaseNumber(1) + "1"
 
     def test_mix(self):
         alpha = Alpha(0.05)

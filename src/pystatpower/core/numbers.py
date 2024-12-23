@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from math import isclose
+
+type BaseNumberType = BaseNumber | None
 
 #: 对于数值计算有意义的最小浮点数。
 MIN_FLOAT: float = 1e-10
@@ -136,7 +140,7 @@ class Interval:
         return (self.pseudo_lbound(eps), self.pseudo_ubound(eps))
 
 
-class PowerAnalysisFloat(float):
+class BaseNumber(float):
     """功效分析数值类型的基类。
 
     - 如果传递一个 `int` 或 `float` 数值来创建一个实例，将会检查它是否在定义域 :attr:`domain` 内。
@@ -146,18 +150,18 @@ class PowerAnalysisFloat(float):
 
     Examples
     --------
-    >>> PowerAnalysisFloat(0.5)
+    >>> BaseNumber(0.5)
     0.5
-    >>> PowerAnalysisFloat(0.5) * PowerAnalysisFloat(0.5)
+    >>> BaseNumber(0.5) * BaseNumber(0.5)
     0.25
-    >>> isinstance(PowerAnalysisFloat(0.5), float)
+    >>> isinstance(BaseNumber(0.5), float)
     True
     """
 
     #: 一个 :class:`Interval` 对象，用于限制特定数值类型的取值范围。
     domain = Interval(-MAX_FLOAT, MAX_FLOAT, lower_inclusive=True, upper_inclusive=True)
 
-    def __new__(cls, obj):
+    def __new__(cls, obj) -> BaseNumber | None:
         if isinstance(obj, (int, float)):
             if obj not in cls.domain:
                 raise ValueError(f"{obj} is not in {cls.domain}.")
@@ -180,70 +184,70 @@ class PowerAnalysisFloat(float):
         return cls.domain.pseudo_bound()
 
 
-class Alpha(PowerAnalysisFloat):
+class Alpha(BaseNumber):
     """显著性水平"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, 1)
 
 
-class Power(PowerAnalysisFloat):
+class Power(BaseNumber):
     """检验效能"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, 1)
 
 
-class Mean(PowerAnalysisFloat):
+class Mean(BaseNumber):
     """均值"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(-MAX_FLOAT, MAX_FLOAT)
 
 
-class STD(PowerAnalysisFloat):
+class STD(BaseNumber):
     """标准差"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, MAX_FLOAT)
 
 
-class Proportion(PowerAnalysisFloat):
+class Proportion(BaseNumber):
     """率"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, 1)
 
 
-class Percent(PowerAnalysisFloat):
+class Percent(BaseNumber):
     """百分比"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, 1)
 
 
-class Ratio(PowerAnalysisFloat):
+class Ratio(BaseNumber):
     """比值"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, MAX_FLOAT)
 
 
-class Size(PowerAnalysisFloat):
+class Size(BaseNumber):
     """样本量"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, MAX_FLOAT)
 
 
-class DropOutRate(PowerAnalysisFloat):
+class DropOutRate(BaseNumber):
     """脱落率"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.
     domain = Interval(0, 1, lower_inclusive=True)
 
 
-class DropOutSize(PowerAnalysisFloat):
+class DropOutSize(BaseNumber):
     """考虑脱落率后的样本量"""
 
     #: 参见 :attr:`PowerAnalysisFloat.domain`.

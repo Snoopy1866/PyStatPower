@@ -2,7 +2,7 @@ from enum import Enum
 
 import pytest
 
-from pystatpower.option import Option
+from pystatpower.core.options import Option
 
 
 class TestOption:

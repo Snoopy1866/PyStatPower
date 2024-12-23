@@ -6,7 +6,7 @@ from math import ceil, sqrt
 from scipy.optimize import brentq
 from scipy.stats import norm
 
-from pystatpower.numeric import (
+from pystatpower.core.numbers import (
     Alpha,
     DropOutRate,
     DropOutSize,
@@ -15,7 +15,7 @@ from pystatpower.numeric import (
     Proportion,
     Size,
 )
-from pystatpower.option import Alternative, Option, SearchDirection
+from pystatpower.core.options import Alternative, Option, SearchDirection
 
 
 @unique
@@ -111,6 +111,31 @@ def fun_power(
         result = norm.cdf(stat[0]) + 1 - norm.cdf(stat[1])
 
     return result
+
+
+class OneProportionConfig:
+    def __init__(
+        self,
+        size: Size,
+        alpha: Alpha,
+        power: Power,
+        nullproportion: Proportion,
+        proportion: Proportion,
+        alternative: Alternative,
+        test_type: TestType,
+        dropout_rate: DropOutRate,
+    ):
+        self.size = size
+        self.alpha = alpha
+        self.power = power
+        self.nullproportion = nullproportion
+        self.proportion = proportion
+        self.alternative = alternative
+        self.test_type = test_type
+        self.dropout_rate = dropout_rate
+
+    def get_solve_target(self):
+        pass
 
 
 class OneProportion:
